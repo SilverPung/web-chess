@@ -13,7 +13,7 @@
     <body class="bg-slate-700 flex flex-col min-h-screen">
         <div class="text-center text-4xl bg-slate-800 py-4 flex  border-b-2 border-l-2 border-r-2 border-gray-400">
             <div class="flex-1 font-serif">
-                <a href="{%url 'home'%}" class="text-gray-500">Chess Creator</a>
+                <a href="{%url 'core:home'%}" class="text-gray-500">Chess Creator</a>
             </div>
         </div>
         <div class="grid grid-cols-7 flex-grow">
@@ -34,7 +34,7 @@
         </div>
         <footer class="text-center text-2xl bg-slate-900 py-4 border-t-2 border-gray-400 mt-auto">
             <div class="flex-1 font-serif">
-                <a href="{%url 'home'%}" class="text-gray-400">Chess Creator@zoo</a>
+                <a href="{% url 'core:home' %}" class="text-gray-400">Chess Creator@zoo</a>
             </div>
         </footer>
     </body>
