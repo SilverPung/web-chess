@@ -1,7 +1,7 @@
 from django.shortcuts import render
-
-# Create your views here.
-
+from .models import Image
 
 def home(request):
-    return render(request, 'core/home.html')
+    main_image = Image.objects.filter(name__iexact='create tournament').first()
+    context = {'main_image': main_image}
+    return render(request, 'core/home.html', context)

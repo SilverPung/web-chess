@@ -10,43 +10,32 @@
 
     </head>
 
-    <body>
-        
-        <nav class="py-6 px-6 flex justify-between items-center border-b border-gray-200">
-            <a href="/" class="text-xl font-semibold">Stronka</a>
-            <div class="space-x-6">
-                <a href="#" class="text-lg hover:text-gray-900">Element</a>
-                <a href="#" class="text-lg hover:text-gray-900">Browse</a>
-                
-            
-                   
-                    <a href="#" class="px-6 py-3 text-lg hover:text-gray-900 bg-teal-500 text-white rounded-xl hover:bg-teal-700">Sign up</a><!--przyciski do logowania-->
-                    <a href="#" class="px-6 py-3 text-lg hover:text-gray-900 bg-gray-500 text-white rounded-xl hover:bg-gray-700">Log in</a>
+    <body class="bg-slate-700 flex flex-col min-h-screen">
+        <div class="text-center text-4xl bg-slate-800 py-4 flex  border-b-2 border-l-2 border-r-2 border-gray-400">
+            <div class="flex-1 font-serif">
+                <a href="{%url 'home'%}" class="text-gray-500">Chess Creator</a>
             </div>
-        </nav>
-        
-        <div class="px-6 py-6"><!--tutaj jest zawartość strony-->
-            {%block content %}
-            {%endblock%}
         </div>
-        
-        <footer class="py-6 px-6 flex justify-between bg-gray-800"><!--stopka strony-->
-            <div class="w2/3 pr-10"><!--o stronie-->
-                <h3 class="mb-5 font-semibold text-gray-400">About</h3>
-
-                <p class="text-lg text-gray-500">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <div class="grid grid-cols-7 flex-grow">
+            <div class="col-span-1 bg-slate-900 h-full overflow-auto border-r-2 border-gray-400 border-l-2" >
+                {%block sidebar%}
+    
+                {%endblock%}
             </div>
-            <div class="w-1/3"><!--menu strony-->
-                <h3 class="mb-5 font-semibold text-gray-400">Menu</h3>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-lg text-teal-500 hover:text-teal-700">About</a></li>
-                    <li><a href="#" class="text-lg text-teal-500 hover:text-teal-700">Contact</a></li>
-                    <li><a href="#" class="text-lg text-teal-500 hover:text-teal-700">Privacy</a></li>
-                    <li><a href="#" class="text-lg text-teal-500 hover:text-teal-700">Terms of use</a></li>
-                </ul>
-                
+            <div class="col-span-6 bg-slate-800 h-screen">
+                <div class="bg-slate-900 py-4 flex border-b-2 border-gray-400 justify-end">             
+                    <a href="" class="flex rounded-xl py-2 px-6 border-r-2 border-black h-full items-center bg-gray-400 relative z-10">Zajerestruj się</a>
+                    <a href="" class="flex rounded-xl py-2 px-6 -ml-3 mr-3 h-full items-center bg-gray-500">Zaloguj</a> 
+                </div>
+                {%block content%}
+    
+                {%endblock%}
+            </div>
+        </div>
+        <footer class="text-center text-2xl bg-slate-900 py-4 border-t-2 border-gray-400 mt-auto">
+            <div class="flex-1 font-serif">
+                <a href="{%url 'home'%}" class="text-gray-400">Chess Creator@zoo</a>
+            </div>
         </footer>
-
-            
     </body>
 </html>
