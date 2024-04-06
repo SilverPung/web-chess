@@ -28,11 +28,16 @@
                     <label class="inline-block mb-2">Powtórz Hasło</label><br>
                     {{form.password2}} <!-- Pole "Password" -->
                 </div>
-                {% if form.errors or form.non_field_errors %} <!-- Jeśli są błędy formularza -->
-                    <div class="bg-red-100 p-6 mb-3 rounded-xl"> <!-- Kontener dla błędów -->
-                        <ul> <!-- Lista błędów -->
-                            {% for error in form.errors %} <!-- Pętla przez błędy -->
-                                <li>{{error}}</li> <!-- Wyświetla błąd -->
+                {% if form.errors %}
+                    <div class="bg-red-100 p-6 mb-3 rounded-xl">
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
                             {% endfor %}
                         </ul>
                     </div>

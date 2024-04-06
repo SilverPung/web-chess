@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %} <!-- Rozszerza bazowy szablon HTML -->
+
+{% block title %}Log out{%endblock%} <!-- Ustawia tytuł strony na "Signup" -->
+
+{% block content %} <!-- Początek bloku zawartości -->
+    <div class="w-1/2 my-6 mx-auto p-6 bg-gray-100 rounded-xl"> <!-- Kontener dla formularza rejestracji -->
+            {% if request.user.is_authenticated %}
+                <h1 class="text-3xl text-center font-bold mb-6">Are you sure you want to log out?</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Log out</button>
+                </form>
+            {% else %}
+                <h1 class="text-3xl text-center font-bold mb-6">You are not logged in</h1>
+            {% endif %}
+     
+    </div>
+{% endblock %} <!-- Koniec bloku zawartości -->
