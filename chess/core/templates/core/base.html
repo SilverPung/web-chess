@@ -23,10 +23,18 @@
                 {%endblock%}
             </div>
             <div class="col-span-6 bg-slate-800 h-screen">
+                
+                {%if request.user.is_authenticated%}
+                    <div class="bg-slate-900 py-4 flex border-b-2 border-gray-400 justify-end">             
+                        <a href="" class="flex rounded-xl py-2 px-6 border-r-2 border-black h-full items-center bg-gray-400 relative z-10">Profil</a>
+                        <a href="" class="flex rounded-xl py-2 px-6 -ml-3 mr-3 h-full items-center bg-gray-500">Wyloguj</a> 
+                    </div>
+                {%else%}
                 <div class="bg-slate-900 py-4 flex border-b-2 border-gray-400 justify-end">             
-                    <a href="" class="flex rounded-xl py-2 px-6 border-r-2 border-black h-full items-center bg-gray-400 relative z-10">Zajerestruj się</a>
-                    <a href="" class="flex rounded-xl py-2 px-6 -ml-3 mr-3 h-full items-center bg-gray-500">Zaloguj</a> 
+                    <a href="{% url 'core:login' %}" class="flex rounded-xl py-2 px-6 border-r-2 border-black h-full items-center bg-gray-400 relative z-10">Zaloguj</a>
+                    <a href="{% url 'core:signup' %}" class="flex rounded-xl py-2 px-6 -ml-3 mr-3 h-full items-center bg-gray-500">Zajerestruj się</a> 
                 </div>
+                {%endif%}
                 {%block content%}
     
                 {%endblock%}
