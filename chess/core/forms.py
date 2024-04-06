@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
-login_atributes = 'form-control rounded-xl py-3 w-full'
+login_atributes = 'form-control rounded-xl py-3 w-full bg-gray-300'
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': login_atributes, 'placeholder': 'Nazwa Użytkownika'}))

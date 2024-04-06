@@ -2,14 +2,17 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+
 class Chess_Tournament(models.Model):
+    
+    
     name = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
     rounds = models.IntegerField()
-    created_by=models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by=models.ForeignKey(User, on_delete=models.CASCADE,default=1)
 
-
+    
     class Meta:
         ordering = ('name',)
 
@@ -43,3 +46,6 @@ class Chess_Game(models.Model):
 
     def __str__(self):
         return self.tournament.name + ' - ' + self.player1.name + ' vs ' + self.player2.name
+    
+
+
