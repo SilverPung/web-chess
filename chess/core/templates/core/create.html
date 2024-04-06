@@ -8,13 +8,30 @@
 
 {% block content %}
     
-    <div class="grid grid-cols-2 mx-3 my-3 bg-slate-600 rounded-lg">
-            <a href="{% url 'chesstour:create_new' %}"class= "grid-span-1 text-center block via-transparent border-gray-400 border-2 rounded mx-1 my-1">
-                <h1 class="text-3xl text-white">Stwórz Nowy Turniej</h1>
-            </a>
-            <a href="{% url 'chesstour:edit' %}"class= "grid-span-1 text-center block via-transparent border-gray-400 border-2 rounded mx-1 my-1">
-                <h1 class="text-3xl text-white">Edytuj Swój Turniej</h1>
-            </a>
+    <div>
+    <a href="{% url 'chesstour:create_new' %}" class="flex mx-10 my-5  rounded-xl justify-center bg-slate-600 flex-col items-center hover:bg-slate-700">
+        <h1 class="text-3xl font-bold my-3 mt-5">Stwórz Turniej Szachowy</h1>
+    </a>
     </div>
+        
+    {% if tournamnest != 0 %}
+        <div>
+            <div class="flex mx-10 mt-5  rounded-xl justify-center bg-slate-600 flex-col items-center">
+                <h1 class="text-3xl font-bold my-3 mt-5">Edytuj Turniej Szachowy</h1>
+            </div>
+            <div class="flex flex-col justify-center">
+                {% for tournament in tournaments %}
+                    <a href="" class="flex mx-20 -mt-1  rounded-xl justify-center bg-slate-700 flex-col items-center border-2 border-gray-400 hover:bg-gray-800">
+                        <h1 class="text-2xl font-bold my-3 mt-5">{{ tournament.name|capfirst }}</h1>
+                        <h1 class="text-lg font-bold my-3 mt-5 ">Opis Turnieju: {{ tournament.description|capfirst }}</h1>
+                        <h1 class="text-lg font-bold my-3 mt-5">Data stworzenia: {{ tournament.created_at}}</h1>
+
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+            
+    
 
 {% endblock %}

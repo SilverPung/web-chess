@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Image
+from chesstour.models import Chess_Tournament
 from .forms import LoginForm, SignupForm
 from django.contrib.auth import logout
 
@@ -9,7 +10,11 @@ def home(request):
     return render(request, 'core/home.html', context)
 
 def create(request):
-    return render(request, 'core/create.html')
+    if request.user.is_authenticated:
+        users_tournaments = Chess_Tournament.objects.filter(created_by=request.user)
+        return render(request, 'core/create.html', {'tournaments': users_tournaments})
+    else:
+        return redirect('core:login')
 
 def signup(request):
     if request.method == 'POST':

@@ -3,24 +3,21 @@ from django.contrib.auth.decorators import login_required
 from .forms import TournamentForm
 
 # Create your views here.
+@login_required
 def create_new(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            form = TournamentForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('chesstour:edit')
-            else:
-                print(form.errors)
+    if request.method == 'POST':
+        form = TournamentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('chesstour:edit')
         else:
-            form=TournamentForm()
-        return render(request, 'chesstour/create_new.html', {'form': form})
+            print(form.errors)
     else:
-        return redirect('core:login')
+        form=TournamentForm()
+    return render(request, 'chesstour/create_new.html', {'form': form})
 
-
+@login_required
 def edit(request):
-    if request.user.is_authenticated:
-        return render(request, 'chesstour/edit.html')
-    else:
-        return redirect('core:login')
+
+    return render(request, 'chesstour/edit.html')
+    
