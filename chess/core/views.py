@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Image
 from .forms import LoginForm, SignupForm
 
@@ -11,5 +11,13 @@ def create(request):
     return render(request, 'core/create.html')
 
 def signup(request):
-    form = SignupForm()
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/login/')
+        else:
+            print(form.errors)
+    else:
+        form = SignupForm()
     return render(request, 'core/signup.html', {'form': form})
