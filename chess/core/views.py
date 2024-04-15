@@ -9,10 +9,10 @@ def home(request):
     context = {'main_image': main_image}
     return render(request, 'core/home.html', context)
 
-def create(request):
+def manage(request):
     if request.user.is_authenticated:
         users_tournaments = Chess_Tournament.objects.filter(created_by=request.user)
-        return render(request, 'core/create.html', {'tournaments': users_tournaments})
+        return render(request, 'core/manage.html', {'tournaments': users_tournaments})
     else:
         return redirect('core:login')
 

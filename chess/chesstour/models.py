@@ -9,7 +9,7 @@ class Chess_Tournament(models.Model):
     name = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
-    rounds = models.IntegerField()
+    rounds = models.IntegerField(default=0)
     created_by=models.ForeignKey(User, on_delete=models.CASCADE,default=1)
 
     

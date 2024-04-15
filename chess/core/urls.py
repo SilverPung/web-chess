@@ -6,7 +6,7 @@ from .forms import LoginForm
 app_name = 'core'
 urlpatterns = [
     path('', views.home, name='home'),
-    path('create/', views.create, name='create'),
+    path('manage/', views.manage, name='manage'),
     path('logout/', views.logout_view, name='logout'),
     path('login/', auth_views.LoginView.as_view(template_name='core/login.html',authentication_form=LoginForm), name='login'),
     path('signup/', views.signup, name='signup')

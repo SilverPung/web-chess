@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Create Game{% endblock %}
+{% block title %}Manage Games{% endblock %}
 
 {% block sidebar %}
 
@@ -21,7 +21,7 @@
             </div>
             <div class="flex flex-col justify-center">
                 {% for tournament in tournaments %}
-                    <a href="" class="flex mx-20 -mt-1  rounded-xl justify-center bg-slate-700 flex-col items-center border-2 border-gray-400 hover:bg-gray-800">
+                    <a href="{% url 'chesstour:edit' tournament.id %}" class="flex mx-20 -mt-1  rounded-xl justify-center bg-slate-700 flex-col items-center border-2 border-gray-400 hover:bg-gray-800">
                         <h1 class="text-2xl font-bold my-3 mt-5">{{ tournament.name|capfirst }}</h1>
                         <h1 class="text-lg font-bold my-3 mt-5 ">Opis Turnieju: {{ tournament.description|capfirst }}</h1>
                         <h1 class="text-lg font-bold my-3 mt-5">Data stworzenia: {{ tournament.created_at}}</h1>
