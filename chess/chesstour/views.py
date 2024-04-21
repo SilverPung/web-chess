@@ -50,3 +50,41 @@ def edit(request, pk):
         'player_form': player_form
     })
     
+def check_if_in_games(player1,player2,games):
+    for game in games:
+        if game.player1==player1 and game.player2==player2:
+            return True
+        if game.player1==player2 and game.player2==player1:
+            return True
+    return False
+
+def create_game(players,games,number_of_rounds):
+    sorted_players=list(players.order_by('-rating'))
+    print(sorted_players)
+    if len(sorted_players)%2!=0:
+        bye=sorted_players[-1]
+        Chess_Game.objects.create(player1=bye,player2=bye,tournament=bye.tournament,round=number_of_rounds+1)
+        sorted_players=sorted_players[:-1]
+    
+    while len(sorted_players)>0:
+        j=0
+        while check_if_in_games(sorted_players[j],sorted_players[j+1],games):
+            j+=1
+            if j>=len(sorted_players)-1:
+                raise ValueError('No possible game')
+        player1=sorted_players[j]
+        player2=sorted_players[j+1]
+        sorted_players.remove(player1)
+        sorted_players.remove(player2)
+        Chess_Game.objects.create(player1=player1,player2=player2,tournament=player1.tournament,round=number_of_rounds+1)
+        
+
+
+def game(request, pk):
+    tournament = Chess_Tournament.objects.get(pk=pk)
+    games = Chess_Game.objects.filter(tournament=tournament)
+    players = Chess_Player.objects.filter(tournament=tournament)
+    create_game(players,games,tournament.rounds)
+    return render(request, 'chesstour/game.html', {'tournament': tournament, 'games': games, 'players': players})
+
+

@@ -38,7 +38,6 @@ class Chess_Game(models.Model):
     player1 = models.ForeignKey(Chess_Player, on_delete=models.CASCADE, related_name='player1')
     player2 = models.ForeignKey(Chess_Player, on_delete=models.CASCADE, related_name='player2')
     round = models.IntegerField()
-    result = models.CharField(max_length=50)
     date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
