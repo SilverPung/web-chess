@@ -22,7 +22,7 @@ class Chess_Player(models.Model):
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
     username = models.CharField(max_length=50)
-    rating = models.IntegerField(default=0)
+    rating = models.FloatField(default=0)
     birth_date = models.DateField(null=True, blank=True)
     tournament = models.ForeignKey(Chess_Tournament, on_delete=models.CASCADE)
     white_games = models.IntegerField(default=0)

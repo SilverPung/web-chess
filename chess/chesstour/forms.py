@@ -27,3 +27,12 @@ class PlayerForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300'}),
             'surname': forms.TextInput(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300'}),
         }
+
+class ScoreForm(forms.Form):
+    SCORE_CHOICES = [
+        (0, '0'),
+        (0.5, '0.5'),
+        (1, '1'),
+    ]
+    player1_score = forms.ChoiceField(choices=SCORE_CHOICES, widget=forms.Select(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300 text-center'}))
+    player2_score = forms.ChoiceField(choices=SCORE_CHOICES, widget=forms.Select(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300 text-center'}))
