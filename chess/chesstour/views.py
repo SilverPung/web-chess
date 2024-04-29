@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import TournamentForm, PlayerForm, ScoreForm
 from .models import Chess_Tournament,Chess_Game,Chess_Player
 from django.db.models import Max
+from django.forms import modelformset_factory
 # Create your views here.
 @login_required
 def create_new(request):
@@ -120,5 +121,14 @@ def edit_game(request, pk):
 
     return render(request, 'chesstour/edit_game.html', {'tournament': tournament, 'games': current_games, 'score_forms':score_forms})
                 
-            
-   
+def manage_players(request, pk,spk):
+    player=Chess_Player.objects.get(pk=spk)
+    form=PlayerForm(instance=player)
+    if request.method == 'POST':
+        form=PlayerForm(request.POST,instance=player)
+        if form.is_valid():
+            form.save()
+            return redirect('chesstour:edit', pk=pk)
+        else:
+            print(form.errors)
+    return render(request, 'chesstour/manage_players.html', {'form': form, 'player': player})

@@ -7,4 +7,5 @@ urlpatterns = [
     path('edit/<int:pk>', views.edit, name='edit'),
     path('game/<int:pk>', views.game, name='game'),
     path('edit_game/<int:pk>', views.edit_game, name='edit_game'),
+    path('players/<int:pk>/<int:spk>/', views.manage_players, name='manage_players'),
 ]

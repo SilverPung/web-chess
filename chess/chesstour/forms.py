@@ -20,9 +20,10 @@ class PlayerForm(forms.ModelForm):
     tournament = forms.ModelChoiceField(required=False,queryset=Chess_Tournament.objects.all(), widget=forms.HiddenInput())
     username = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300'}))
     birth_date = forms.DateField(required=False,widget=forms.TextInput(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300'}))
+    rating = forms.FloatField(required=False,widget=forms.TextInput(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300'}))
     class Meta:
         model = Chess_Player
-        fields = ['name', 'surname', 'username', 'birth_date']
+        fields = ['name', 'surname', 'username', 'birth_date','rating']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300'}),
             'surname': forms.TextInput(attrs={'class': 'form-control rounded-xl py-3 w-full bg-gray-300'}),
