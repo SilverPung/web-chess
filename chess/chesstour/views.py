@@ -4,14 +4,18 @@ from .forms import TournamentForm, PlayerForm, ScoreForm
 from .models import Chess_Tournament,Chess_Game,Chess_Player
 from django.db.models import Max
 from django.forms import modelformset_factory
+import logging
+from .create_algorythms import create_game_version1,create_game_version2
 # Create your views here.
 @login_required
 def create_new(request):
     if request.method == 'POST':
         form = TournamentForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('chesstour:edit')
+            new_tournament = form.save()
+            new_tournament_id = new_tournament.id
+            print(new_tournament_id)  # prints the id of the newly created tournament
+            return redirect('chesstour:edit', pk=new_tournament_id)
         else:
             print(form.errors)
     else:
@@ -21,8 +25,9 @@ def create_new(request):
 @login_required
 def edit(request, pk):
     tournament = Chess_Tournament.objects.get(pk=pk)
-    players = Chess_Player.objects.filter(tournament=tournament)
-
+    if tournament.created_by != request.user:
+        return redirect('core:manage')
+    players = Chess_Player.objects.filter(tournament=tournament).order_by('-rating')
     if request.method == 'POST':
         if 'tournament_form' in request.POST:
             tournament_form = TournamentForm(request.POST,instance=tournament)
@@ -44,7 +49,6 @@ def edit(request, pk):
     else:
         tournament_form = TournamentForm(instance=tournament)
         player_form = PlayerForm()
-
     return render(request, 'chesstour/edit.html', {
         'tournament': tournament,
         'players': players,
@@ -52,56 +56,43 @@ def edit(request, pk):
         'player_form': player_form
     })
     
-def check_if_in_games(player1,player2,games):
-    for game in games:
-        if game.player1==player1 and game.player2==player2:
-            return True
-        if game.player1==player2 and game.player2==player1:
-            return True
-    return False
-
-def create_game(players,games,number_of_rounds):
-    sorted_players=list(players.order_by('-rating'))
-    #print(sorted_players)
-    if len(sorted_players)%2!=0:
-        bye=sorted_players[-1]
-        Chess_Game.objects.create(player1=bye,player2=bye,tournament=bye.tournament,round=number_of_rounds+1)
-        sorted_players=sorted_players[:-1]
-    while len(sorted_players)>0:
-        j=0
-        while check_if_in_games(sorted_players[0],sorted_players[j+1],games):
-            j+=1
-            if j>=len(sorted_players)-1:
-                game=games[0]
-                Chess_Game.objects.filter(tournament=game.tournament).delete()
-                games=[]
-                j=1
-                break
-        player1=sorted_players[0]
-        player2=sorted_players[j+1]
-        sorted_players.remove(player1)
-        sorted_players.remove(player2)
-        Chess_Game.objects.create(player1=player1,player2=player2,tournament=player1.tournament,round=number_of_rounds+1)
-        
-
-
+@login_required
 def game(request, pk):
     tournament = Chess_Tournament.objects.get(pk=pk)
+    if tournament.created_by != request.user:
+        return redirect('core:manage')
     games = Chess_Game.objects.filter(tournament=tournament)
-    players = Chess_Player.objects.filter(tournament=tournament)
+    players = Chess_Player.objects.filter(tournament=tournament).order_by('-rating')
     return render(request, 'chesstour/game.html', {'tournament': tournament, 'games': games, 'players': players})
 
+@login_required
 def edit_game(request, pk):
+    
     tournament = Chess_Tournament.objects.get(pk=pk)
+    if tournament.created_by != request.user:#security check
+        return redirect('core:manage')
     players = Chess_Player.objects.filter(tournament=tournament)
     games = Chess_Game.objects.filter(tournament=tournament)
-    if not games:
-        create_game(players,games,tournament.rounds)
-    else:
-        max_round = games.aggregate(Max('round'))['round__max']
-        if tournament.rounds==max_round:
-            create_game(players,games,tournament.rounds)
-        
+    sorted_players = Chess_Player.objects.filter(tournament=tournament).order_by('-rating')
+    
+    try: #trying to create new games with basic algorithm but if it fails wi will switch to another one
+        if not games:
+            create_game_version1(players,games,tournament.rounds)
+        else:
+            max_round = games.aggregate(Max('round'))['round__max']
+            if tournament.rounds==max_round:
+                create_game_version1(players,games,tournament.rounds)
+    except Exception as e1:
+        logging.error(f"An exception occurred: {e1}")
+        try:
+            if not games:
+                create_game_version2(players,games,tournament.rounds)
+            else:
+                max_round = games.aggregate(Max('round'))['round__max']
+                if tournament.rounds==max_round:
+                    create_game_version2(players,games,tournament.rounds)
+        except Exception as e2:
+            pass # to do: add third version of the algorithm to be safe
 
     current_games = Chess_Game.objects.filter(tournament=tournament,round=tournament.rounds+1)
     score_forms = [(game, ScoreForm(prefix=str(game.player1.id) + "_"+str(game.player2.id))) for game in current_games]
@@ -119,9 +110,14 @@ def edit_game(request, pk):
         tournament.save()
         return redirect('chesstour:game', pk=pk)
 
-    return render(request, 'chesstour/edit_game.html', {'tournament': tournament, 'games': current_games, 'score_forms':score_forms})
-                
+    return render(request, 'chesstour/edit_game.html', {'tournament': tournament, 'games': current_games, 'score_forms':score_forms, 'players': sorted_players})
+
+@login_required              
 def manage_players(request, pk,spk):
+    
+    if Chess_Tournament.objects.get(pk=pk).created_by!=request.user:
+        return redirect('core:manage')
+    
     player=Chess_Player.objects.get(pk=spk)
     form=PlayerForm(instance=player)
     if request.method == 'POST':
@@ -132,3 +128,21 @@ def manage_players(request, pk,spk):
         else:
             print(form.errors)
     return render(request, 'chesstour/manage_players.html', {'form': form, 'player': player})
+
+@login_required
+def view_results(request, pk):
+    tournament = Chess_Tournament.objects.get(pk=pk)
+    if tournament.created_by != request.user:
+        return redirect('core:manage')
+    players = Chess_Player.objects.filter(tournament=tournament).order_by('-rating')
+    if players.count() < 3:
+        return redirect('chesstour:edit', pk=pk)
+    first = players[0]
+    second = players[1]
+    third = players[2]
+    players=players[3:]
+    if request.method == 'POST':
+        tournament.delete()
+        return redirect('core:manage')
+
+    return render(request, 'chesstour/view_results.html', {'tournament': tournament, 'players': players, 'first': first, 'second': second, 'third': third})

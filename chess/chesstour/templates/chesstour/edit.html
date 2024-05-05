@@ -4,7 +4,8 @@
 
 {% block sidebar %}
     <div class="flex flex-col text-center">
-        <h1 class="text-gray-200">Gracze</h1>
+        <h1 class="text-gray-200 test-xl">Gracze</h1>
+        
         {% for player in players %}
         <a href="{%url 'chesstour:manage_players' pk=tournament.id spk=player.id %}" class="w-3/4 my-1 p-2 mx-auto bg-slate-600 rounded-xl border-gray-400 border-2">
             <div>
@@ -14,6 +15,7 @@
             </div>
         </a>
         {% endfor %}
+        <h1 class="text-gray-200">Ilość:{{players|length}}</h1>
     </div>
 
 {% endblock %}
@@ -110,6 +112,22 @@
             <div class="justify-center flex flex-col mx-auto w-1/2">
                 <h1 class="mb-6 text-3xl text-center">Menu Gry</h1>
                 <a href="{% url 'chesstour:game' tournament.id%}" class="py-4 px-8 text-lg rounded-xl bg-teal-500 hover:bg-teal-700 text-white text-center">Edytuj grę</a>
+            </div>
+        </div>  
+    </div>
+    <div class="w-1/2 my-6 mx-auto p-6 bg-slate-600 rounded-xl border-gray-400 border-2"> 
+        <div class="justify-center flex flex-col mx-auto w-1/2">
+            <div class="justify-center flex flex-col mx-auto w-1/2">
+                <h1 class="mb-6 text-3xl text-center">Wyświetl Wyniki</h1>
+                <a href="{% url 'chesstour:view_results' tournament.id%}" class="py-4 px-8 text-lg rounded-xl bg-teal-500 hover:bg-teal-700 text-white text-center">Wyświetl</a>
+            </div>
+        </div>  
+    </div>
+    <div class="w-1/2 my-6 mx-auto p-6 bg-slate-600 rounded-xl border-gray-400 border-2"> 
+        <div class="justify-center flex flex-col mx-auto w-1/2">
+            <div class="justify-center flex flex-col mx-auto w-1/2">
+                <h1 class="mb-6 text-3xl text-center">Wróć do zarządzania grami</h1>
+                <a href="{% url 'core:manage'%}" class="py-4 px-8 text-lg rounded-xl bg-teal-500 hover:bg-teal-700 text-white text-center">Wróć</a>
             </div>
         </div>  
     </div>

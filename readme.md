@@ -6,4 +6,4 @@ Stage of the project we have:
     app chesstour this is the app for chess side of the project here we ad tournament and give them player and game(etc.round)
 
 
-Version 0.3.2
+Version 0.4.0
