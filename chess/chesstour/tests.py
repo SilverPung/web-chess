@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .models import Chess_Player, Chess_Game, Chess_Tournament
-from .views import create_game_version1,create_game_version2,check_if_in_games
+from .views import create_game_version1,create_game_version2
 from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
