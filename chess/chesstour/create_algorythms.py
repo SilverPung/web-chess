@@ -85,3 +85,17 @@ def create_game_version2(players,games,number_of_rounds):
         to_create.append((player1,player2))
     for player1,player2 in to_create:
         Chess_Game.objects.create(player1=player1,player2=player2,tournament=player1.tournament,round=number_of_rounds+1)
+
+def determine_white_player(tournament, round):
+    games=Chess_Game.objects.filter(tournament=tournament,round=round)
+    for game in games:
+        if game.white_player==None:
+            if game.player1.white_games>game.player2.white_games:
+                game.white_player=game.player2
+                game.player2.white_games+=1
+            else:
+                game.white_player=game.player1
+                game.player1.white_games+=1
+            game.player1.save()
+            game.player2.save()
+            game.save()

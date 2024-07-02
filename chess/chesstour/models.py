@@ -39,6 +39,7 @@ class Chess_Game(models.Model):
     player2 = models.ForeignKey(Chess_Player, on_delete=models.CASCADE, related_name='player2')
     round = models.IntegerField()
     date = models.DateTimeField(null=True, blank=True)
+    white_player = models.ForeignKey(Chess_Player, on_delete=models.CASCADE, related_name='white_player', null=True, blank=True)
 
     class Meta:
         ordering = ('tournament',)
