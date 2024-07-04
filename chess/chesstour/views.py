@@ -5,7 +5,7 @@ from .models import Chess_Tournament,Chess_Game,Chess_Player
 from django.db.models import Max
 from django.forms import modelformset_factory
 import logging
-from .create_algorythms import create_game_version1,create_game_version2,determine_white_player
+from .create_algorythms import create_game_version1,create_game_version2,determine_white_player,create_game_version3
 # Create your views here.
 @login_required
 def create_new(request):
@@ -92,7 +92,17 @@ def edit_game(request, pk):
                 if tournament.rounds==max_round:
                     create_game_version2(players,games,tournament.rounds)
         except Exception as e2:
-            raise Exception(f"Can't create a game with this algorithm(1) and this algorithm(2)")
+            logging.error(f"An exception occurred: {e2}")
+            try:
+                if not games:
+                    create_game_version3(players,games,tournament.rounds)
+                else:
+                    max_round = games.aggregate(Max('round'))['round__max']
+                    if tournament.rounds==max_round:
+                        create_game_version3(players,games,tournament.rounds)
+            except Exception as e3:
+                logging.error(f"An exception occurred: {e3}")
+
     determine_white_player(tournament=tournament, round=tournament.rounds+1) #determining white player for each game
     current_games = Chess_Game.objects.filter(tournament=tournament,round=tournament.rounds+1)
     score_forms = [(game, ScoreForm(prefix=str(game.player1.id) + "_"+str(game.player2.id))) for game in current_games]
