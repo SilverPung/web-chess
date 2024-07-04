@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
 from unittest import mock
-class CreateGameTestVE1(TestCase):
+class CreateGameTestRepeat1(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='12345')
         self.tournament = Chess_Tournament.objects.create(name='Test Tournament', description='Test Description',created_by_id=1)
@@ -16,14 +16,14 @@ class CreateGameTestVE1(TestCase):
         self.players = Chess_Player.objects.filter(tournament=self.tournament)
 
     def test_create_game(self):
-        create_game_version1( self.players , [], 0)
+        create_game_version2( self.players , [], 0,0)
         games = Chess_Game.objects.all()
         self.assertEqual(Chess_Game.objects.count(), 2)
         self.assertEqual(set((games[0].player1, games[0].player2)), set((self.players[0], self.players[2])))
         self.assertEqual(set((games[1].player1, games[1].player2)), set((self.players[3], self.players[1])))
     def test_create_game_with_bye(self):
         players = Chess_Player.objects.filter(id__in=[1, 2, 4])
-        create_game_version1(players, [], 0)
+        create_game_version2(players, [], 0,0)
         games = Chess_Game.objects.all()
         #print(games)
         self.assertEqual(Chess_Game.objects.count(), 2)
@@ -31,9 +31,9 @@ class CreateGameTestVE1(TestCase):
         self.assertEqual(set((games[1].player1, games[1].player2)), set((players[0], players[2])))
     def test_create_game_with_previous_games(self):
         players = Chess_Player.objects.filter(id__in=[1, 2, 3, 4])
-        create_game_version1(players, [], 0)
+        create_game_version2(players, [], 0,0)
         games = Chess_Game.objects.all()
-        create_game_version1(players, games, 1)
+        create_game_version2(players, games, 1,0)
         games = Chess_Game.objects.all()
         self.assertEqual(Chess_Game.objects.count(), 4)
         #print(games)
@@ -42,12 +42,12 @@ class CreateGameTestVE1(TestCase):
         )
     def test_create_game_with_previous_games_and_changing_score(self):
         players = Chess_Player.objects.filter(id__in=[1, 2, 3, 4])
-        create_game_version1(players, [], 0)
+        create_game_version2(players, [], 0,0)
         games = Chess_Game.objects.all()
         Chess_Player.objects.filter(id=1).update(rating=2)
         Chess_Player.objects.filter(id=4).update(rating=2)
         players = Chess_Player.objects.filter(id__in=[1, 2, 3, 4])
-        create_game_version1(players, games, 1)
+        create_game_version2(players, games, 1,0)
         games = Chess_Game.objects.all()
         self.assertEqual(Chess_Game.objects.count(), 4)
         #print(games)
@@ -55,7 +55,7 @@ class CreateGameTestVE1(TestCase):
         self.assertEqual(set((games[3].player1, games[3].player2)), set((players[1], players[2]))
         )
 
-class CreateGameTestVE2(TestCase):
+class CreateGameTestRepeat2(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='12345')
         self.tournament = Chess_Tournament.objects.create(name='Test Tournament', description='Test Description',created_by_id=1)
@@ -127,7 +127,6 @@ class TestEditGame(TestCase):
         self.assertEqual(Chess_Game.objects.count(), 3)
         # Play second round
         response = self.client.post(self.edit_game_url)
-        self.assertTrue(mock_log.called)
         games = Chess_Game.objects.all()
         players = Chess_Player.objects.all()
         self.assertEqual(Chess_Game.objects.count(), 6)

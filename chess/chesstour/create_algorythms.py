@@ -14,7 +14,7 @@ def check_if_in_games(player1,player2,games):
             return True
     return False
 
-def create_game_version1(players,games,number_of_rounds):#algorithm to make pairs of players
+def create_game_version1(players,games,number_of_rounds):#dead algoritm not used anymore 
 
     sorted_players=list(players.order_by('-rating'))
     #print(sorted_players)
@@ -40,7 +40,6 @@ def create_game_version1(players,games,number_of_rounds):#algorithm to make pair
                 Chess_Game.objects.filter(tournament=game.tournament).delete()
                 games=[]
                 j=0
-                continue
         
         player1=sorted_players[0]
         player2=sorted_players[j+1]
@@ -50,18 +49,18 @@ def create_game_version1(players,games,number_of_rounds):#algorithm to make pair
     for player1,player2 in to_create:
         Chess_Game.objects.create(player1=player1,player2=player2,tournament=player1.tournament,round=number_of_rounds+1)
 
-def create_game_version2(players,games,number_of_rounds):
+def create_game_version2(players,games,number_of_rounds,reapeter=1): #new algorithm for creating games
     sorted_players=list(players.order_by('-rating'))
     #print(sorted_players)
     to_create=[]
     
-    if len(sorted_players)%2!=0:
+    if len(sorted_players)%2!=0: #if there is odd number of players
         bye=sorted_players[-1]
         to_create.append((bye,bye))
         sorted_players=sorted_players[:-1]
     
     while len(sorted_players)>0:
-        j=1
+        j=reapeter
         
         try:
             while check_if_in_games(sorted_players[0],sorted_players[j+1],games):
@@ -76,7 +75,7 @@ def create_game_version2(players,games,number_of_rounds):
                 game=games[0]
                 Chess_Game.objects.filter(tournament=game.tournament).delete()
                 games=[]
-                j=1
+                j=reapeter
         
         player1=sorted_players[0]
         player2=sorted_players[j+1]

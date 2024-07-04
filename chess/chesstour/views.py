@@ -75,24 +75,25 @@ def edit_game(request, pk):
     games = Chess_Game.objects.filter(tournament=tournament)
     sorted_players = Chess_Player.objects.filter(tournament=tournament).order_by('-rating')
     
-    try: #trying to create new games with basic algorithm but if it fails wi will switch to another one
-        if not games:
-            create_game_version1(players,games,tournament.rounds)
-        else:
-            max_round = games.aggregate(Max('round'))['round__max']
-            if tournament.rounds==max_round:
-                create_game_version1(players,games,tournament.rounds)
-    except Exception as e1:
-        logging.error(f"An exception occurred: {e1}")
-        try:
+    repeater=0#variable for swithcing the starting from where to start pairing players
+    while repeater<len(sorted_players):
+        try: #trying to create new games with basic algorithm but if it fails wi will switch to another one
             if not games:
-                create_game_version2(players,games,tournament.rounds)
+                create_game_version2(players,games,tournament.rounds,reapeter=repeater)
+                break
             else:
-                max_round = games.aggregate(Max('round'))['round__max']
+                max_round = games.aggregate(Max('round'))['round__max']#checking if we already have games from previous rounds
                 if tournament.rounds==max_round:
-                    create_game_version2(players,games,tournament.rounds)
-        except Exception as e2:
-            raise Exception(f"Can't create a game with this algorithm(1) and this algorithm(2)")
+                    create_game_version2(players,games,tournament.rounds,reapeter=repeater)
+                break
+        except Exception as e1:
+            repeater+=1
+        if repeater==len(sorted_players)-1:#exception if algorithm cannnot create game because of loop  create by giving the same results
+            Chess_Game.objects.filter(tournament=tournament).delete()
+            repeater=0
+            continue
+
+    
     determine_white_player(tournament=tournament, round=tournament.rounds+1) #determining white player for each game
     current_games = Chess_Game.objects.filter(tournament=tournament,round=tournament.rounds+1)
     score_forms = [(game, ScoreForm(prefix=str(game.player1.id) + "_"+str(game.player2.id))) for game in current_games]
