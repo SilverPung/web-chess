@@ -49,7 +49,7 @@ def create_game_version1(players,games,number_of_rounds):#dead algoritm not used
     for player1,player2 in to_create:
         Chess_Game.objects.create(player1=player1,player2=player2,tournament=player1.tournament,round=number_of_rounds+1)
 
-def create_game_version2(players,games,number_of_rounds,reapeter=1): #new algorithm for creating games
+def create_game_version2(players,games,number_of_rounds,reapeter=0): #new algorithm for creating games
     sorted_players=list(players.order_by('-rating'))
     #print(sorted_players)
     to_create=[]
@@ -69,8 +69,8 @@ def create_game_version2(players,games,number_of_rounds,reapeter=1): #new algori
             if not check_if_in_games(sorted_players[0],sorted_players[1],games):
                 j=0
             elif to_create:#if there is only one pair left and they can't play with each other
-                to_create=[]
-                raise Exception("Can't create a game with this algorithm(2)")
+                
+                raise Exception(f"Can't create a game with this algorithm(2){to_create}")
             else:#if all players have played with each other
                 game=games[0]
                 Chess_Game.objects.filter(tournament=game.tournament).delete()

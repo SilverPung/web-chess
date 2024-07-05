@@ -88,6 +88,7 @@ def edit_game(request, pk):
                 break
         except Exception as e1:
             repeater+=1
+            logging.error(e1)
         if repeater==len(sorted_players)-1:#exception if algorithm cannnot create game because of loop  create by giving the same results
             Chess_Game.objects.filter(tournament=tournament).delete()
             repeater=0
