@@ -100,13 +100,19 @@ def determine_white_player(tournament, round):
             game.save()
 
 
-def creating_game_version3(players,games,number_of_rounds):
+def create_game_version3(players,games,number_of_rounds):
 
     sorted_players=list(players.order_by('-rating'))
     #print(sorted_players)
     to_create={}
     
     repeater=0
+    if len(games)>=3/2*len(sorted_players):#after a player played with min 3 other players their games are deleted 
+        game = games[0]
+        latest_10_games_ids = Chess_Game.objects.filter(tournament=game.tournament).order_by('-id')[:len(games)].values_list('id', flat=True)
+        Chess_Game.objects.filter(id__in=latest_10_games_ids).delete()
+        games = Chess_Game.objects.filter(tournament=game.tournament)
+    
     
     if len(sorted_players)%2!=0: #if there is odd number of players
         bye=sorted_players[-1]
@@ -114,6 +120,7 @@ def creating_game_version3(players,games,number_of_rounds):
         repeater+=1
         sorted_players=sorted_players[:-1]
     j=0
+    last_reapeater=0
     #repeater=0/1
     while len(sorted_players)>0:
         try:
@@ -123,14 +130,19 @@ def creating_game_version3(players,games,number_of_rounds):
             if len(to_create)==0:
                 game=games[0]
                 Chess_Game.objects.filter(tournament=game.tournament).delete()
-            else:
+            else:#if there is only one pair left and they can't play with each other
                 repeater-=1
+                if last_reapeater==repeater:
+                    number_of_loops+=1
+                else :
+                    number_of_loops=0
+                    last_reapeater=repeater
                 player1,player2=to_create.pop(repeater)
                 sorted_players.insert(0,player1)
-                sorted_players.insert(1,player2)
-                j=1
+                sorted_players.insert(1+number_of_loops,player2)
+                j=1+number_of_loops
                 continue
-        
+                
         player1=sorted_players[0]
         player2=sorted_players[j+1]
         sorted_players.remove(player1)
@@ -142,3 +154,5 @@ def creating_game_version3(players,games,number_of_rounds):
         player1,player2=value
         Chess_Game.objects.create(player1=player1,player2=player2,tournament=player1.tournament,round=number_of_rounds+1)
 
+
+    

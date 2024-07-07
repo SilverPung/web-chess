@@ -5,7 +5,7 @@ from .models import Chess_Tournament,Chess_Game,Chess_Player
 from django.db.models import Max
 from django.forms import modelformset_factory
 import logging
-from .create_algorythms import create_game_version1,create_game_version2,determine_white_player
+from .create_algorythms import determine_white_player, create_game_version3
 # Create your views here.
 @login_required
 def create_new(request):
@@ -74,24 +74,9 @@ def edit_game(request, pk):
     players = Chess_Player.objects.filter(tournament=tournament)
     games = Chess_Game.objects.filter(tournament=tournament)
     sorted_players = Chess_Player.objects.filter(tournament=tournament).order_by('-rating')
-    
-    repeater=0#variable for swithcing the starting from where to start pairing players
-    while repeater<len(sorted_players):
-        try: #trying to create new games with basic algorithm but if it fails wi will switch to another one
-            if not games:
-                create_game_version2(players,games,tournament.rounds,reapeter=repeater)
-                break
-            else:
-                max_round = games.aggregate(Max('round'))['round__max']#checking if we already have games from previous rounds
-                if tournament.rounds==max_round:
-                    create_game_version2(players,games,tournament.rounds,reapeter=repeater)
-                break
-        except Exception as e1:
-            repeater+=1
-        if repeater==len(sorted_players)-1:#exception if algorithm cannnot create game because of loop  create by giving the same results
-            Chess_Game.objects.filter(tournament=tournament).delete()
-            repeater=0
-            continue
+    max_round = games.aggregate(Max('round'))['round__max']
+    if not games or tournament.rounds==max_round:
+        create_game_version3(players=players,games=games,number_of_rounds=tournament.rounds)
 
     
     determine_white_player(tournament=tournament, round=tournament.rounds+1) #determining white player for each game
